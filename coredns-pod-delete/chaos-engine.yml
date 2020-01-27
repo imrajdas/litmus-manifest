@@ -1,0 +1,34 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+    name: engine-coredns
+    namespace: kube-system
+spec:
+    jobCleanUpPolicy: retain
+    monitoring: false
+    appinfo: 
+      appns: kube-system 
+      # FYI, To see app label, apply kubectl get pods --show-labels
+      applabel: "k8s-app=kube-dns" 
+      appkind: deployment
+    chaosType: 'infra'
+    chaosServiceAccount: coredns-sa
+    components:
+        runner:
+           image: litmuschaos/ansible-runner:ci
+    experiments:
+    - name: coredns-pod-delete
+      spec:
+        components:
+        - name: CHAOS_NAMESPACE
+          value: 'kube-system'
+
+        - name: APP_LABEL
+          value: 'k8s-app=kube-dns'
+
+         # provide application kind
+        - name: APP_KIND
+          value: 'deployment'
+
+        - name: APP_NAMESPACE
+          value: 'kube-system'
