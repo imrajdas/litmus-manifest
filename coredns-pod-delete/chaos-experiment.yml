@@ -1,51 +1,53 @@
-apiVersion: litmuschaos.io/v1alpha1
-description:
+  apiVersion: litmuschaos.io/v1alpha1
+  description:
     message: |
-        Deletes coredns pod in kube-system namespace
-kind: ChaosExperiment
-metadata:
+      Deletes coredns pod in kube-system namespace
+  kind: ChaosExperiment
+  metadata:
     name: coredns-pod-delete
-    namespace: kube-system
-    version: 0.1.1
-spec:
+    version: 0.1.4
+  spec:
     definition:
-        permissions:
-          apiGroups:
-            - ""
-            - "extensions"
-            - "apps"
-            - "batch"
-            - "litmuschaos.io"
-          resources:
-            - "daemonsets"
-            - "jobs"
-            - "pods"
-            - "chaosengines"
-            - "chaosexperiments"
-            - "chaosresults"
-          verbs:
-            - "*"
-        image: "litmuschaos/ansible-runner:ci"
-        args:
-        - -c
-        - ansible-playbook ./experiments/coredns/pod_delete/pod_delete_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0
-        command:
-        - /bin/bash
-        env:
-    
-        - name: ANSIBLE_STDOUT_CALLBACK
-          value: 'default'
-    
-        - name: TOTAL_CHAOS_DURATION
-          value: '15'
-    
-        - name: FORCE
-          value: 'true'
-    
-        - name: CHAOS_INTERVAL
-          value: '5'
-    
-        - name: LIB
-          value: ''    
-        labels:
-          name: coredns-pod-delete
+      permissions:
+      - apiGroups:
+          - ""
+          - "batch"
+          - "litmuschaos.io"
+        resources:
+          - "services"
+          - "jobs"
+          - "pods"
+          - "chaosengines"
+          - "chaosexperiments"
+          - "chaosresults"
+        verbs:
+          - "get"
+          - "list"
+          - "patch"
+          - "create"
+          - "update"
+          - "delete"
+      image: "litmuschaos/ansible-runner:latest"
+      args:
+      - -c
+      - ansible-playbook ./experiments/coredns/pod_delete/pod_delete_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0
+      command:
+      - /bin/bash
+      env:
+  
+      - name: ANSIBLE_STDOUT_CALLBACK
+        value: 'default'
+  
+      - name: TOTAL_CHAOS_DURATION
+        value: '15'
+  
+      - name: FORCE
+        value: 'true'
+  
+      - name: CHAOS_INTERVAL
+        value: '5'
+  
+      - name: LIB
+        value: ''    
+      labels:
+        name: coredns-pod-delete
